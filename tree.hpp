@@ -23,7 +23,7 @@ template <class T> void delete_not(T &) {}
 /*!
  * This class encodes the nodes and their relative links.
  * \param T Type for nodes.
- * \param delete_T ¿¿¿ ???.
+ * \param delete_T function to delete the value of type T.
  */
 template <class T, void (*delete_T)(T &) = delete_not<T>> class Node {
 
@@ -67,37 +67,43 @@ public:
    * It can be used on const Node.
    * \return the value of \c father .
    */
-  Node *get_father() const { return father; };
+  Node *get_father() const { return father; }
 
   /*!
    * To get access to the value of \c val.
    * It can be used on const Node.
    * \return the value of \c val .
    */
-  T get_value() const { return value; };
+  T get_value() const { return value; }
 
   /*! To add a left_son (to the left of any other existing son).
    * \param val Value for the added son.
    * \return A pointer to the newly created \c Node.
    */
-  Node *add_left_son(T val) { return NULL; };
+  Node *add_left_son(T val) { return new Node(val, this); }
 
   /*! To add a brother to the right (to the left of any other existing son).
    * \param val Value for the added brother.
    * \return A pointer to the newly created \c Node.
    */
-  Node *add_right_brother(T val) { return NULL; }
+  Node *add_right_brother(T val) {
+    return new Node(val, this->father->right_brother);
+  }
 
   /*!
    * Destructor.
+   * TODO should i destroy childrens ?
    */
-  ~Node(){};
+  ~Node() {
+    delete_T(value);
+    delete (left_son);
+  };
 };
 
 /*!
  * This class is to represent a tree.
  * \param T Type for nodes.
- * \param delete_T ¿¿¿ ???.
+ * \param delete_T function to delete the value of type T.
  */
 template <class T, void (*delete_T)(T &) = delete_not<T>> class Tree {
 
