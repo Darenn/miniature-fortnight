@@ -80,7 +80,11 @@ public:
    * \param val Value for the added son.
    * \return A pointer to the newly created \c Node.
    */
-  Node *add_left_son(T val) { return new Node(val, this); }
+  Node *add_left_son(T val) {
+    Node *son = new Node(val, this);
+    this->left_son = son;
+    return son;
+  }
 
   /*! To add a brother to the right (to the left of any other existing son).
    * \param val Value for the added brother.
