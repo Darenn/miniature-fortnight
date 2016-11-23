@@ -25,7 +25,10 @@ template <class T> void delete_not(T &) {}
  * \param T Type for nodes.
  * \param delete_T function to delete the value of type T.
  */
-template <class T, void (*delete_T)(T &) = delete_not<T>> class Node {
+
+#define DELETE_NOT delete_not<T>
+
+template <class T, void (*delete_T)(T &) = DELETE_NOT> class Node {
 
   /*! Value held. */
   T value;
@@ -82,7 +85,10 @@ public:
    */
   Node *add_left_son(T val) {
     Node *son = new Node(val, this);
-    this->left_son = son;
+    if (left_son != NULL) {
+      son->right_brother = left_son;
+    }
+    left_son = son;
     return son;
   }
 
@@ -91,17 +97,43 @@ public:
    * \return A pointer to the newly created \c Node.
    */
   Node *add_right_brother(T val) {
-    return new Node(val, this->father->right_brother);
+    Node *n = new Node(val, father);
+    if (right_brother != NULL) {
+      n->right_brother = right_brother;
+    }
+    right_brother = n;
+    return n;
   }
 
   /*!
    * Destructor.
-   * TODO should i destroy childrens ?
    */
   ~Node() {
     delete_T(value);
-    delete (left_son);
+    Node *toDestroy = left_son;
+    Node *nextToDestroy;
+    while (toDestroy != NULL) {
+      nextToDestroy = toDestroy->right_brother;
+      delete (toDestroy);
+      toDestroy = nextToDestroy;
+    }
   };
+
+  /*template <char const *const open_sons, char const *const sep_brothers,
+            char const *const close_sons>*/
+  void output(std::ostream &ost, char const *const open_sons,
+              char const *const sep_brothers, char const *const close_sons) {
+    ost << value;
+    if (left_son != NULL) {
+      ost << open_sons;
+      left_son->output(ost, open_sons, sep_brothers, close_sons);
+      ost << close_sons;
+    }
+    if (right_brother != NULL) {
+      ost << sep_brothers;
+      right_brother->output(ost, open_sons, sep_brothers, close_sons);
+    }
+  }
 };
 
 /*!
@@ -109,7 +141,7 @@ public:
  * \param T Type for nodes.
  * \param delete_T function to delete the value of type T.
  */
-template <class T, void (*delete_T)(T &) = delete_not<T>> class Tree {
+template <class T, void (*delete_T)(T &) = DELETE_NOT> class Tree {
 
   /*
    * Root note of the tree.
@@ -139,7 +171,7 @@ public:
   /*!
    * Destructor.
    */
-  ~Tree() {}
+  ~Tree() { delete root; }
 
   template <char const *const open_sons, char const *const sep_brothers,
             char const *const close_sons>
@@ -153,6 +185,7 @@ template <class T, void (*delete_T)(T &)>
 template <char const *const open_sons, char const *const sep_brothers,
           char const *const close_sons>
 std::ostream &Tree<T, delete_T>::out_put(std::ostream &ost) {
+  root->output(ost, open_sons, sep_brothers, close_sons);
   return ost;
 }
 
