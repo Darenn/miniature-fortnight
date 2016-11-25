@@ -40,7 +40,7 @@ public:
 /*!
  * Output a Xml tree on a stream, like for example:
  * \verbatim
-racine>
+<racine>
 <fille>
 <petiteFille>
 BBBB ! : , b fg
@@ -51,7 +51,6 @@ BBBB ! : , b fg
 </fille>
 </racine>
  * \endverbatim
- * \param out The output stream to output to.
  * \param xml The xml to  output.
  * \return the output stream \c out.
  */
