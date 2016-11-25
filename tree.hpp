@@ -119,8 +119,6 @@ public:
     }
   };
 
-  /*template <char const *const open_sons, char const *const sep_brothers,
-            char const *const close_sons>*/
   void output(std::ostream &ost, char const *const open_sons,
               char const *const sep_brothers, char const *const close_sons) {
     ost << value;
@@ -178,8 +176,14 @@ public:
   std::ostream &out_put(std::ostream &ost);
 };
 
-/*
- * ???
+/*!
+ * \brief Display the current tree into the given ostream.
+ * \param T Type of the values in the tree.
+ * \param delete_T Function to delete the value of type T.
+ * \param open_sons String to begin sons display.
+ * \param close_sons String to end sons display.
+ * \param sep_brothers String to separe brothers.
+ * \return the ostream given.
  */
 template <class T, void (*delete_T)(T &)>
 template <char const *const open_sons, char const *const sep_brothers,
